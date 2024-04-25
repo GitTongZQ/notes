@@ -1,0 +1,15 @@
+1.前台进程如何生成core dump
+ulimit -c unlimit //开启core 生成，并不对生成core文件大小进行限制
+echo "/media/mmcblk0p1/%e-%t.coredump" > /proc/sys/kernel/core_pattern //设置文件保存路径以及文件名
+
+2.后台进程要生成core dump文件需在进程代码中开启core dump功能，可调用setrlimit函数来实现对coresize参数的设置，所以在调试后台程序时只需在程序中添加以下代码段开启core dump功能即可
+#include <sys/resource.h>
+static int enableCoreDumpFunc() {
+    int iRes = RLIMIT_CORE;
+    struct rlimit limitParam;
+    limitParam.rlim_cur = 1 ? RLIM_INFINITY : 0;
+    limitParam.rlim_max = 1 ? RLIM_INFINITY : 0;
+    if (0 == setrlimit(iRes, &limitParam)) {
+        system("echo /data/%e-%p-%t-%s.dump > /proc/sys/kernel/core_pattern");
+    }
+}
