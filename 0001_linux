@@ -13,3 +13,72 @@ static int enableCoreDumpFunc() {
         system("echo /data/%e-%p-%t-%s.dump > /proc/sys/kernel/core_pattern");
     }
 }
+
+3.flutter_server_box服务器状态监测软件状态获取
+enum StatusCmdType {
+  echo,
+  time,
+  net,
+  sys,
+  cpu,
+  uptime,
+  conn,
+  disk,
+  mem,
+  tempType,
+  tempVal,
+  host,
+  diskio,
+  battery,
+  nvidia,
+  sensors,
+  ;
+}
+
+/// Cmds for linux server
+const _statusCmds = [
+  'echo ${SystemType.linuxSign}',
+  'date +%s',
+  'cat /proc/net/dev',
+  'cat /etc/*-release | grep PRETTY_NAME',
+  'cat /proc/stat | grep cpu',
+  'uptime',
+  'cat /proc/net/snmp',
+  'df',
+  "cat /proc/meminfo | grep -E 'Mem|Swap'",
+  'cat /sys/class/thermal/thermal_zone*/type',
+  'cat /sys/class/thermal/thermal_zone*/temp',
+  'cat /etc/hostname',
+  'cat /proc/diskstats',
+  'for f in /sys/class/power_supply/*/uevent; do cat "\$f"; echo; done',
+  'nvidia-smi -q -x',
+  'sensors -j',
+];
+
+enum BSDStatusCmdType {
+  echo,
+  time,
+  net,
+  sys,
+  cpu,
+  uptime,
+  disk,
+  mem,
+  //temp,
+  host,
+  ;
+}
+
+/// Cmds for BSD server
+const _bsdStatusCmd = [
+  'echo ${SystemType.bsdSign}',
+  'date +%s',
+  'netstat -ibn',
+  'uname -or',
+  'top -l 1 | grep "CPU usage"',
+  'uptime',
+  'df -k',
+  'top -l 1 | grep PhysMem',
+  //'sysctl -a | grep temperature',
+  'hostname',
+];
